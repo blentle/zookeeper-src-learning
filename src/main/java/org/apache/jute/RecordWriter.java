@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,40 +31,40 @@ import java.util.HashMap;
  *
  */
 public class RecordWriter {
-    
+
     private OutputArchive archive;
-    
+
     static private OutputArchive getBinaryArchive(OutputStream out) {
         return new BinaryOutputArchive(new DataOutputStream(out));
     }
-    
+
     static private OutputArchive getCsvArchive(OutputStream out)
-    throws IOException {
+            throws IOException {
         try {
             return new CsvOutputArchive(out);
         } catch (UnsupportedEncodingException ex) {
             throw new IOException("Unsupported encoding UTF-8");
         }
     }
-    
+
     static private OutputArchive getXmlArchive(OutputStream out)
-    throws IOException {
+            throws IOException {
         return new XmlOutputArchive(out);
     }
 
     static HashMap constructFactory() {
         HashMap factory = new HashMap();
-        Class[] params = { OutputStream.class };
+        Class[] params = {OutputStream.class};
         try {
             factory.put("binary",
                     BinaryOutputArchive.class.getDeclaredMethod(
-                        "getArchive", params));
+                            "getArchive", params));
             factory.put("csv",
                     CsvOutputArchive.class.getDeclaredMethod(
-                        "getArchive", params));
+                            "getArchive", params));
             factory.put("xml",
                     XmlOutputArchive.class.getDeclaredMethod(
-                        "getArchive", params));
+                            "getArchive", params));
         } catch (SecurityException ex) {
             ex.printStackTrace();
         } catch (NoSuchMethodException ex) {
@@ -72,15 +72,15 @@ public class RecordWriter {
         }
         return factory;
     }
-    
+
     static private HashMap archiveFactory = constructFactory();
-    
+
     static private OutputArchive createArchive(OutputStream out,
-            String format)
+                                               String format)
             throws IOException {
         Method factory = (Method) archiveFactory.get(format);
         if (factory != null) {
-            Object[] params = { out };
+            Object[] params = {out};
             try {
                 return (OutputArchive) factory.invoke(null, params);
             } catch (IllegalArgumentException ex) {
@@ -93,16 +93,17 @@ public class RecordWriter {
         }
         return null;
     }
+
     /**
      * Creates a new instance of RecordWriter
      * @param out Output stream where the records will be serialized
      * @param format Serialization format ("binary", "xml", or "csv")
      */
     public RecordWriter(OutputStream out, String format)
-    throws IOException {
+            throws IOException {
         archive = createArchive(out, format);
     }
-    
+
     /**
      * Serialize a record
      * @param r record to be serialized
