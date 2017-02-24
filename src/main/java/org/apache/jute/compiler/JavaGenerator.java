@@ -30,11 +30,12 @@ class JavaGenerator {
     private ArrayList<JRecord> mRecList;
     private final File outputDirectory;
 
-    /** Creates a new instance of JavaGenerator
+    /**
+     * Creates a new instance of JavaGenerator
      *
-     * @param name possibly full pathname to the file
-     * @param incl included files (as JFile)
-     * @param records List of records defined within this file
+     * @param name            possibly full pathname to the file
+     * @param incl            included files (as JFile)
+     * @param records         List of records defined within this file
      * @param outputDirectory
      */
     JavaGenerator(String name, ArrayList<JFile> incl,
