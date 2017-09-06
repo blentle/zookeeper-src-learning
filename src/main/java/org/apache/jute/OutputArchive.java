@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 /**
- * Interface that alll the serializers have to implement.
+ * Interface that all the serializers have to implement.
  */
 public interface OutputArchive {
     public void writeByte(byte b, String tag) throws IOException;

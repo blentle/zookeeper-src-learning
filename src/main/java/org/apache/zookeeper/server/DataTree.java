@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,8 +78,7 @@ public class DataTree {
      * This hashtable provides a fast lookup to the datanodes. The tree is the
      * source of truth and is where all the locking occurs
      */
-    private final ConcurrentHashMap<String, DataNode> nodes =
-            new ConcurrentHashMap<String, DataNode>();
+    private final ConcurrentHashMap<String, DataNode> nodes = new ConcurrentHashMap<String, DataNode>();
 
     private final WatchManager dataWatches = new WatchManager();
 
