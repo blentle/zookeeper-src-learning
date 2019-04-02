@@ -82,6 +82,7 @@ public class FastLeaderElection implements Election {
     LinkedBlockingQueue<Notification> recvqueue;
     //(自己加的注释)移动了成员变量
     QuorumPeer self;
+    //消息发送和接收的线程
     Messenger messenger;
     volatile long logicalclock; /* Election instance */
     long proposedLeader;
@@ -191,6 +192,33 @@ public class FastLeaderElection implements Election {
      */
 
     private class Messenger {
+
+
+
+		WorkerSender ws;
+		WorkerReceiver wr;
+
+		/**
+		 * Constructor of class Messenger.
+		 *
+		 * @param manager   Connection manager
+		 */
+		Messenger(QuorumCnxManager manager) {
+
+			this.ws = new WorkerSender(manager);
+
+			Thread t = new Thread(this.ws,
+					"WorkerSender[myid=" + self.getId() + "]");
+			t.setDaemon(true);
+			t.start();
+
+			this.wr = new WorkerReceiver(manager);
+
+			t = new Thread(this.wr,
+					"WorkerReceiver[myid=" + self.getId() + "]");
+			t.setDaemon(true);
+			t.start();
+		}
 
         /**
          * Receives messages from instance of QuorumCnxManager on
@@ -410,32 +438,6 @@ public class FastLeaderElection implements Election {
          */
         public boolean queueEmpty() {
             return (sendqueue.isEmpty() || recvqueue.isEmpty());
-        }
-
-
-        WorkerSender ws;
-        WorkerReceiver wr;
-
-        /**
-         * Constructor of class Messenger.
-         *
-         * @param manager   Connection manager
-         */
-        Messenger(QuorumCnxManager manager) {
-
-            this.ws = new WorkerSender(manager);
-
-            Thread t = new Thread(this.ws,
-                    "WorkerSender[myid=" + self.getId() + "]");
-            t.setDaemon(true);
-            t.start();
-
-            this.wr = new WorkerReceiver(manager);
-
-            t = new Thread(this.wr,
-                    "WorkerReceiver[myid=" + self.getId() + "]");
-            t.setDaemon(true);
-            t.start();
         }
 
         /**
