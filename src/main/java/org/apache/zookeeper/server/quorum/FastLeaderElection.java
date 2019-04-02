@@ -75,6 +75,19 @@ public class FastLeaderElection implements Election {
 
     QuorumCnxManager manager;
 
+    //(自己加的注释)发送队列，用于保存待发送的选票
+    LinkedBlockingQueue<ToSend> sendqueue;
+
+    //(自己加的注释)接收队列，用于保存接收的外部选票
+    LinkedBlockingQueue<Notification> recvqueue;
+    //(自己加的注释)移动了成员变量
+    QuorumPeer self;
+    Messenger messenger;
+    volatile long logicalclock; /* Election instance */
+    long proposedLeader;
+    long proposedZxid;
+    long proposedEpoch;
+
 
     /**
      * Notifications are messages that let other peers know that
@@ -169,9 +182,6 @@ public class FastLeaderElection implements Election {
          */
         long peerEpoch;
     }
-
-    LinkedBlockingQueue<ToSend> sendqueue;
-    LinkedBlockingQueue<Notification> recvqueue;
 
     /**
      * Multi-threaded implementation of message handler. Messenger
@@ -437,13 +447,6 @@ public class FastLeaderElection implements Election {
         }
 
     }
-
-    QuorumPeer self;
-    Messenger messenger;
-    volatile long logicalclock; /* Election instance */
-    long proposedLeader;
-    long proposedZxid;
-    long proposedEpoch;
 
 
     /**
