@@ -39,6 +39,17 @@ import org.apache.zookeeper.data.StatPersistedV1;
  * 
  */
 public class DataNodeV1 implements Record {
+
+    DataNodeV1 parent;
+
+    byte data[];
+
+    List<ACL> acl;
+
+    public StatPersistedV1 stat;
+
+    HashSet<String> children = new HashSet<String>();
+
     DataNodeV1() {
         // default rather than public constructor
     }
@@ -68,16 +79,6 @@ public class DataNodeV1 implements Record {
     public HashSet<String> getChildren() {
         return this.children;
     }
-    
-    DataNodeV1 parent;
-
-    byte data[];
-
-    List<ACL> acl;
-
-    public StatPersistedV1 stat;
-
-    HashSet<String> children = new HashSet<String>();
 
     public void copyStat(Stat to) {
         to.setAversion(stat.getAversion());

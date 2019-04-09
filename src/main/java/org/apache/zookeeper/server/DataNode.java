@@ -131,7 +131,7 @@ public class DataNode implements Record {
         return children;
     }
 
-    synchronized public void copyStat(Stat to) {
+    public synchronized void copyStat(Stat to) {
         to.setAversion(stat.getAversion());
         to.setCtime(stat.getCtime());
         to.setCzxid(stat.getCzxid());

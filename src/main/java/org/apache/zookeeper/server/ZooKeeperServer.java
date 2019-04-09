@@ -73,7 +73,39 @@ import org.slf4j.LoggerFactory;
  * PrepRequestProcessor -> SyncRequestProcessor -> FinalRequestProcessor
  */
 public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
+
     protected static final Logger LOG;
+
+    public static final int DEFAULT_TICK_TIME = 3000;
+    protected int tickTime = DEFAULT_TICK_TIME;
+    /** value of -1 indicates unset, use default */
+    protected int minSessionTimeout = -1;
+    /** value of -1 indicates unset, use default */
+    protected int maxSessionTimeout = -1;
+    protected SessionTracker sessionTracker;
+    private FileTxnSnapLog txnLogFactory = null;
+    private ZKDatabase zkDb;
+    protected long hzxid = 0;
+    public final static Exception ok = new Exception("No prob");
+    protected RequestProcessor firstProcessor;
+    protected volatile boolean running;
+
+    /**
+     * This is the secret that we use to generate passwords, for the moment it
+     * is more of a sanity check.
+     */
+    static final private long superSecret = 0XB3415C00L;
+
+    int requestsInProcess;
+
+    final List<ChangeRecord> outstandingChanges = new ArrayList<ChangeRecord>();
+    // this data structure must be accessed under the outstandingChanges lock
+    final HashMap<String, ChangeRecord> outstandingChangesForPath =
+            new HashMap<String, ChangeRecord>();
+
+    private ServerCnxnFactory serverCnxnFactory;
+
+    private final ServerStats serverStats;
     
     static {
         LOG = LoggerFactory.getLogger(ZooKeeperServer.class);
@@ -97,36 +129,6 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
             return new DataTree();
         }
     }
-
-    public static final int DEFAULT_TICK_TIME = 3000;
-    protected int tickTime = DEFAULT_TICK_TIME;
-    /** value of -1 indicates unset, use default */
-    protected int minSessionTimeout = -1;
-    /** value of -1 indicates unset, use default */
-    protected int maxSessionTimeout = -1;
-    protected SessionTracker sessionTracker;
-    private FileTxnSnapLog txnLogFactory = null;
-    private ZKDatabase zkDb;
-    protected long hzxid = 0;
-    public final static Exception ok = new Exception("No prob");
-    protected RequestProcessor firstProcessor;
-    protected volatile boolean running;
-
-    /**
-     * This is the secret that we use to generate passwords, for the moment it
-     * is more of a sanity check.
-     */
-    static final private long superSecret = 0XB3415C00L;
-
-    int requestsInProcess;
-    final List<ChangeRecord> outstandingChanges = new ArrayList<ChangeRecord>();
-    // this data structure must be accessed under the outstandingChanges lock
-    final HashMap<String, ChangeRecord> outstandingChangesForPath =
-        new HashMap<String, ChangeRecord>();
-    
-    private ServerCnxnFactory serverCnxnFactory;
-
-    private final ServerStats serverStats;
 
     void removeCnxn(ServerCnxn cnxn) {
         zkDb.removeCnxn(cnxn);
