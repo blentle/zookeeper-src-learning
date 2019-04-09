@@ -22,6 +22,16 @@ import org.apache.zookeeper.server.quorum.QuorumPeer.ServerState;
 
 
 public class Vote {
+
+    final private long id;
+
+    final private long zxid;
+
+    final private long electionEpoch;
+
+    final private long peerEpoch;
+
+    final private ServerState state;
     
     public Vote(long id, long zxid) {
         this.id = id;
@@ -55,14 +65,6 @@ public class Vote {
         this.peerEpoch = peerEpoch;
     }
     
-    final private long id;
-    
-    final private long zxid;
-    
-    final private long electionEpoch;
-    
-    final private long peerEpoch;
-    
     public long getId() {
         return id;
     }
@@ -82,8 +84,6 @@ public class Vote {
     public ServerState getState() {
         return state;
     }
-
-    final private ServerState state;
     
     @Override
     public boolean equals(Object o) {
