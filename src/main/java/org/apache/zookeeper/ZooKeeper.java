@@ -161,7 +161,7 @@ public class ZooKeeper {
 
         private volatile Watcher defaultWatcher;
 
-        final private void addTo(Set<Watcher> from, Set<Watcher> to) {
+        private final void addTo(Set<Watcher> from, Set<Watcher> to) {
             if (from != null) {
                 to.addAll(from);
             }
