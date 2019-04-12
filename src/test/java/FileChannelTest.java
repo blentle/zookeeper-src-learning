@@ -18,5 +18,6 @@ public class FileChannelTest {
 		for(String p : s) {
 			System.err.println(p);
 		}
+		Thread thread = new Thread();
 	}
 }

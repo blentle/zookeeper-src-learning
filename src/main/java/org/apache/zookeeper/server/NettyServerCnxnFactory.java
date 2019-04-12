@@ -46,15 +46,26 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 public class NettyServerCnxnFactory extends ServerCnxnFactory {
-    Logger LOG = LoggerFactory.getLogger(NettyServerCnxnFactory.class);
 
+    Logger LOG = LoggerFactory.getLogger(NettyServerCnxnFactory.class);
     ServerBootstrap bootstrap;
     Channel parentChannel;
     ChannelGroup allChannels = new DefaultChannelGroup("zkServerCnxns");
-    HashMap<InetAddress, Set<NettyServerCnxn>> ipMap =
-        new HashMap<InetAddress, Set<NettyServerCnxn>>( );
+    HashMap<InetAddress, Set<NettyServerCnxn>> ipMap = new HashMap<InetAddress, Set<NettyServerCnxn>>( );
     InetSocketAddress localAddress;
     int maxClientCnxns = 60;
+
+    CnxnChannelHandler channelHandler = new CnxnChannelHandler();
+
+    NettyServerCnxnFactory() {
+        bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
+        // parent channel
+        bootstrap.setOption("reuseAddress", true);
+        // child channels
+        bootstrap.setOption("child.tcpNoDelay", true);
+        bootstrap.setOption("child.soLinger", 2);
+        bootstrap.getPipeline().addLast("servercnxnfactory", channelHandler);
+    }
     
     /**
      * This is an inner class since we need to extend SimpleChannelHandler, but
@@ -236,22 +247,6 @@ public class NettyServerCnxnFactory extends ServerCnxnFactory {
             }
         }
         
-    }
-    
-    CnxnChannelHandler channelHandler = new CnxnChannelHandler();
-    
-    NettyServerCnxnFactory() {
-        bootstrap = new ServerBootstrap(
-                new NioServerSocketChannelFactory(
-                        Executors.newCachedThreadPool(),
-                        Executors.newCachedThreadPool()));
-        // parent channel
-        bootstrap.setOption("reuseAddress", true);
-        // child channels
-        bootstrap.setOption("child.tcpNoDelay", true);
-        bootstrap.setOption("child.soLinger", 2);
-
-        bootstrap.getPipeline().addLast("servercnxnfactory", channelHandler);
     }
     
     @Override
