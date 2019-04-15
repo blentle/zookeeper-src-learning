@@ -111,21 +111,18 @@ public class DataTree {
     /**
      * This hashtable lists the paths of the ephemeral nodes of a session.
      */
-    private final Map<Long, HashSet<String>> ephemerals =
-            new ConcurrentHashMap<Long, HashSet<String>>();
+    private final Map<Long, HashSet<String>> ephemerals = new ConcurrentHashMap<Long, HashSet<String>>();
 
     /**
      * this is map from longs to acl's. It saves acl's being stored for each
      * datanode.
      */
-    public final Map<Long, List<ACL>> longKeyMap =
-            new HashMap<Long, List<ACL>>();
+    public final Map<Long, List<ACL>> longKeyMap = new HashMap<Long, List<ACL>>();
 
     /**
      * this a map from acls to long.
      */
-    public final Map<List<ACL>, Long> aclKeyMap =
-            new HashMap<List<ACL>, Long>();
+    public final Map<List<ACL>, Long> aclKeyMap = new HashMap<List<ACL>, Long>();
 
     /**
      * these are the number of acls that we have in the datatree
@@ -278,21 +275,18 @@ public class DataTree {
      * This is a pointer to the root of the DataTree. It is the source of truth,
      * but we usually use the nodes hashmap to find nodes in the tree.
      */
-    private DataNode root = new DataNode(null, new byte[0], -1L,
-            new StatPersisted());
+    private DataNode root = new DataNode(null, new byte[0], -1L, new StatPersisted());
 
     /**
      * create a /zookeeper filesystem that is the proc filesystem of zookeeper
      */
-    private DataNode procDataNode = new DataNode(root, new byte[0], -1L,
-            new StatPersisted());
+    private DataNode procDataNode = new DataNode(root, new byte[0], -1L, new StatPersisted());
 
     /**
      * create a /zookeeper/quota node for maintaining quota properties for
      * zookeeper
      */
-    private DataNode quotaDataNode = new DataNode(procDataNode, new byte[0],
-            -1L, new StatPersisted());
+    private DataNode quotaDataNode = new DataNode(procDataNode, new byte[0], -1L, new StatPersisted());
 
     public DataTree() {
         /* Rather than fight it, let root have an alias */
@@ -322,7 +316,7 @@ public class DataTree {
         return false;
     }
 
-    static public void copyStatPersisted(StatPersisted from, StatPersisted to) {
+    public static void copyStatPersisted(StatPersisted from, StatPersisted to) {
         to.setAversion(from.getAversion());
         to.setCtime(from.getCtime());
         to.setCversion(from.getCversion());
@@ -334,7 +328,7 @@ public class DataTree {
         to.setEphemeralOwner(from.getEphemeralOwner());
     }
 
-    static public void copyStat(Stat from, Stat to) {
+    public static void copyStat(Stat from, Stat to) {
         to.setAversion(from.getAversion());
         to.setCtime(from.getCtime());
         to.setCversion(from.getCversion());
@@ -721,7 +715,7 @@ public class DataTree {
         }
     }
 
-    static public class ProcessTxnResult {
+    public static class ProcessTxnResult {
         public long clientId;
 
         public int cxid;
