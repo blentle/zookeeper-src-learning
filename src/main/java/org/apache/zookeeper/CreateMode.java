@@ -72,7 +72,7 @@ public enum CreateMode {
     /**
      * Map an integer value to a CreateMode value
      */
-    static public CreateMode fromFlag(int flag) throws KeeperException {
+    public static CreateMode fromFlag(int flag) throws KeeperException {
         switch(flag) {
         case 0: return CreateMode.PERSISTENT;
 
